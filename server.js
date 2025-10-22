@@ -1,22 +1,14 @@
-const express = require('express');
-const { ExpressPeerServer } = require('peer');
+// server.js
+const { PeerServer } = require('peerjs');
 
-const app = express();
+// Use fixed port if process.env.PORT not set (local testing)
 const PORT = process.env.PORT || 9000;
 
-// Optional: serve a simple page if you want to test
-app.get('/', (req, res) => {
-  res.send('PeerJS Server Running');
+const server = PeerServer({
+  port: PORT,
+  path: '/',
+  proxied: true,   // needed behind HTTPS reverse proxy like Render
+  debug: true
 });
 
-// Start HTTP server
-const server = app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
-});
-
-// Attach PeerJS server
-const peerServer = ExpressPeerServer(server, {
-  debug: true,
-  path: '/'
-});
-app.use('/peerjs', peerServer);
+console.log(`PeerJS server running on internal port ${PORT}`);
